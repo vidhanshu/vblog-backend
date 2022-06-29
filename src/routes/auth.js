@@ -13,6 +13,10 @@ router.post("/user/register", async (req, res) => {
         await user.save();
         res.status(201).send(user_with_token);
     } catch (err) {
+        console.log(err)
+        if (err.code === 11000) {
+            return res.status(201).send({ result: "user with this email or username already exists" })
+        }
         res.status(500).send(err)
     }
 })
@@ -20,6 +24,7 @@ router.post("/user/register", async (req, res) => {
 
 router.post("/user/login", async (req, res) => {
     const { email, password } = req.body;
+    console.log(email,password)
     try {
         let user;
         if (isEmail(email)) {
@@ -37,6 +42,7 @@ router.post("/user/login", async (req, res) => {
         res.status(202).send(user_with_token);
 
     } catch (err) {
+        console.log(err)
         res.status(500).send(err);
     }
 })

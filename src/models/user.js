@@ -95,7 +95,7 @@ UserSchema.methods.generateUserWithAuthToken = function () {
     const user = this;
     const token = jwt.sign({ _id: user._id }, process.env.SECRETE_KEY, { expiresIn: "7 days" });
     user.accessTokens.push({ token });
-    return { user, token };
+    return { user: user.getSecuredDataWithProfile(), token };
 }
 
 /*****middle ware to protect password*****/
