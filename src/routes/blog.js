@@ -22,7 +22,7 @@ const upload = multer({
  */
 
 //GET /blog/all - gives all the blogs present in the database - any user
-router.get("/blog/all", auth, async (req, res) => {
+router.get("/blog/all", async (req, res) => {
     const { limit, skip, sortBy } = req.query;
     let sort = {};
     if (sortBy) {
