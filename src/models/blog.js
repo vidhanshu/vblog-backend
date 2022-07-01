@@ -14,11 +14,12 @@ const BlogSchema = new Schema({
         type: String,
         require: true,
     },
-    tags: {
-        tag: {
+    tags: [
+        {
             type: String,
+            required: true
         }
-    },
+    ],
     readTime: {
         type: String,
         required: true,

@@ -97,8 +97,10 @@ router.get("/blog/:id/image", async (req, res) => {
 router.post("/blog/publish", auth, async (req, res) => {
     const data = req.body;
     const user = req.user;
+    console.log(data);
     try {
         const blog = new Blog(data);
+        console.log(data)
         blog.owner = user._id;
         const saved = await blog.save();
         res.status(200).send(saved);
