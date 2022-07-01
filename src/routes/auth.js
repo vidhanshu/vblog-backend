@@ -50,6 +50,7 @@ router.post("/user/login", async (req, res) => {
 router.post("/user/logout", auth, async (req, res) => {
     const user = req.user;
     const token_of_cur_user = req.token;
+
     try {
         console.log(token_of_cur_user);
         user.accessTokens = user.accessTokens.filter(({ token }) => token !== token_of_cur_user);

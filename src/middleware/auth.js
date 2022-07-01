@@ -5,6 +5,7 @@ const auth = async (req, res, next) => {
     const accessToken = req.headers.authorization.replace("Bearer ", "");
     try {
         const decoded = jwt.verify(accessToken, process.env.SECRETE_KEY);
+        console.log(decoded)
         const user = await User.findById(decoded._id);
 
         //either user doesn't exists or the token in the user doesn't exists

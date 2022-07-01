@@ -19,6 +19,7 @@ const io = socketio(server, {
 const authRoutes = require("../routes/auth");
 const userRoutes = require("../routes/user")
 const blogRoutes = require("../routes/blog")
+const TagRoutes = require("../routes/tags")
 
 //middle wares
 app.use(morgan('dev'))
@@ -28,6 +29,7 @@ app.use(express.json());
 app.use(authRoutes);
 app.use(userRoutes);
 app.use(blogRoutes)
+app.use(TagRoutes)
 
 app.get("/", (req, res) => {
     res.send("vblog server is running")
