@@ -73,38 +73,55 @@ UserSchema.statics.findUserByCredentials = async function (field, password, type
 
 /***** returning secured data by filtering out the passwords and tokens *****/
 UserSchema.methods.getSecuredData = function () {
-    const user = this;
-    const rawObject = user.toObject();
-    delete rawObject.password
-    delete rawObject.accessTokens
-    delete rawObject.avatar
-    return rawObject
+    try {
+        const user = this;
+        const rawObject = user.toObject();
+        delete rawObject.password
+        delete rawObject.accessTokens
+        delete rawObject.avatar
+        return rawObject
+    } catch (err) {
+        console.log(err)
+    }
 }
 
 /***** returning secured data by filtering out the passwords and tokens *****/
 UserSchema.methods.getSecuredDataWithProfile = function () {
-    const user = this;
-    const rawObject = user.toObject();
-    delete rawObject.password
-    delete rawObject.accessTokens
-    return rawObject
+    try {
+        const user = this;
+        const rawObject = user.toObject();
+        delete rawObject.password
+        delete rawObject.accessTokens
+        return rawObject
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 /*****inserting jwt*****/
 UserSchema.methods.generateUserWithAuthToken = function () {
-    const user = this;
-    const token = jwt.sign({ _id: user._id }, process.env.SECRETE_KEY, { expiresIn: "7 days" });
-    user.accessTokens.push({ token });
-    return { user: user.getSecuredDataWithProfile(), token };
+    try {
+        const user = this;
+        const token = jwt.sign({ _id: user._id }, process.env.SECRETE_KEY, { expiresIn: "7 days" });
+        user.accessTokens.push({ token });
+        return { user: user.getSecuredDataWithProfile(), token };
+    } catch (err) {
+        console.log(err)
+    }
 }
 
 /*****middle ware to protect password*****/
 UserSchema.pre("save", async function (next) {
-    const user = this;
-    if (user.isModified("password")) {
-        const password = user.password;
-        const hashed = await bcryptjs.hash(password, 8);
-        user.password = hashed;
+    try {
+        const user = this;
+        if (user.isModified("password")) {
+            const password = user.password;
+            const hashed = await bcryptjs.hash(password, 8);
+            user.password = hashed;
+        }
+
+    } catch (err) {
+        console.log(err)
     }
     next();
 })

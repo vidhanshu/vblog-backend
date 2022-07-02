@@ -6,10 +6,10 @@ const router = new Router();
 const auth = require("../middleware/auth")
 
 router.post("/user/register", async (req, res) => {
-    const data = req.body;
-    const user = new User(data);
-    const user_with_token = user.generateUserWithAuthToken();
     try {
+        const data = req.body;
+        const user = new User(data);
+        const user_with_token = user.generateUserWithAuthToken();
         await user.save();
         res.status(201).send(user_with_token);
     } catch (err) {
@@ -23,9 +23,8 @@ router.post("/user/register", async (req, res) => {
 
 
 router.post("/user/login", async (req, res) => {
-    const { email, password } = req.body;
-    console.log(email,password)
     try {
+        const { email, password } = req.body;
         let user;
         if (isEmail(email)) {
             user = await User.findUserByCredentials(email, password, "email");
@@ -48,10 +47,10 @@ router.post("/user/login", async (req, res) => {
 })
 
 router.post("/user/logout", auth, async (req, res) => {
-    const user = req.user;
-    const token_of_cur_user = req.token;
 
     try {
+        const user = req.user;
+        const token_of_cur_user = req.token;
         console.log(token_of_cur_user);
         user.accessTokens = user.accessTokens.filter(({ token }) => token !== token_of_cur_user);
         await user.save();
@@ -62,8 +61,8 @@ router.post("/user/logout", auth, async (req, res) => {
 })
 
 router.post("/user/logout/all", auth, async (req, res) => {
-    const user = req.user;
     try {
+        const user = req.user;
         user.accessTokens = [];
         await user.save();
         res.status(202).send();
