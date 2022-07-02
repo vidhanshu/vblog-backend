@@ -42,5 +42,12 @@ BlogSchema.virtual('comments', {
     foreignField: "blog"
 })
 
+
+BlogSchema.methods.BlogWithoutImage = function () {
+    const blog = this;
+    const rawBlog = blog.toObject();
+    delete rawBlog.image;
+    return rawBlog;
+}
 const Blog = mongoose.model("Blog", BlogSchema);
 module.exports = Blog;

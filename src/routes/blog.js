@@ -29,14 +29,14 @@ router.get("/blog/:id", auth, async (req, res) => {
         if (!blog) {
             return res.status(404).send({ error: 'not found' });
         }
-        res.status(200).send(blog);
+        res.status(200).send(blog.BlogWithoutImage());
     } catch (err) {
         console.log(err)
         res.status(500).send(err);
     }
 })
 
-//GET /blog/all - gives all the blogs present in the database - any user
+//GET /blog/all/list - gives all the blogs list present in the database - any user
 router.get("/blog/all/list", async (req, res) => {
     const { limit, skip, sortBy } = req.query;
     let sort = {};
@@ -51,6 +51,7 @@ router.get("/blog/all/list", async (req, res) => {
         const blogs = await Blog.find({}, {}, { limit, skip, sort });
         blogs.map(blog => {
             blog.text = blog.text.substring(0, 400);
+            blog.image = undefined;
         })
         res.status(200).send(blogs);
     } catch (err) {
