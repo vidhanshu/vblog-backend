@@ -7,7 +7,7 @@ const app = express();
 const server = createServer(app);
 const socketio = require("socket.io");
 const morgan = require("morgan")
-
+const cors = require("cors")
 const io = socketio(server, {
     cors: {
         origin: ["http://localhost:3000"],
@@ -22,8 +22,9 @@ const blogRoutes = require("../routes/blog")
 const TagRoutes = require("../routes/tags")
 
 //middle wares
-app.use(morgan('dev'))
+app.use(morgan('dev'));
 app.use(express.json());
+app.use(cors());
 
 //useRoutes
 app.use(authRoutes);
