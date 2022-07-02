@@ -21,6 +21,43 @@ const upload = multer({
  * @params GET  ROUTES
  */
 
+//GET /blog/:id - gives blog by id |any user|
+router.get("/blog/:id", auth, async (req, res) => {
+    const id = req.params.id;
+    try {
+        const blog = await Blog.findById(id);
+        if (!blog) {
+            return res.status(404).send({ error: 'not found' });
+        }
+        res.status(200).send(blog);
+    } catch (err) {
+        console.log(err)
+        res.status(500).send(err);
+    }
+})
+
+//GET /blog/all - gives all the blogs present in the database - any user
+router.get("/blog/all/list", async (req, res) => {
+    const { limit, skip, sortBy } = req.query;
+    let sort = {};
+    if (sortBy) {
+        const sort_query = sortBy.split(":");
+        sort[sort_query[0]] = sort_query[1];
+    } else {
+        sort = undefined;
+    }
+
+    try {
+        const blogs = await Blog.find({}, {}, { limit, skip, sort });
+        blogs.map(blog => {
+            blog.text = blog.text.substring(0, 400);
+        })
+        res.status(200).send(blogs);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+})
+
 //GET /blog/all - gives all the blogs present in the database - any user
 router.get("/blog/all", async (req, res) => {
     const { limit, skip, sortBy } = req.query;
@@ -41,20 +78,6 @@ router.get("/blog/all", async (req, res) => {
 })
 
 
-//GET /blog/:id - gives blog by id |any user|
-router.get("/blog/:id", auth, async (req, res) => {
-    const id = req.params.id;
-
-    try {
-        const blog = await Blog.findById(id);
-        if (!blog) {
-            return res.status(404).send({ error: 'not found' });
-        }
-        res.status(200).send(blog);
-    } catch (err) {
-        res.status(500).send(err);
-    }
-})
 //GET /blogs/user/:id - gives all blogs of user by user id |any user|
 router.get("/blogs/user/:id", auth, async (req, res) => {
     const id = req.params.id;
