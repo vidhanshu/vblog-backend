@@ -22,6 +22,9 @@ const UserSchema = new Schema({
             }
         }
     },
+    about: {
+        type: String,
+    },
     password: {
         type: String,
         required: true,
@@ -40,6 +43,30 @@ const UserSchema = new Schema({
         token: {
             type: String,
             required: true,
+        }
+    },
+    socialLinks: {
+        type: Object,
+        facebook: {
+            type: String,
+        },
+        twitter: {
+            type: String,
+        },
+        instagram: {
+            type: String,
+        },
+        linkedin: {
+            type: String,
+        },
+        github: {
+            type: String,
+        },
+        reddit: {
+            type: String,
+        },
+        twitch: {
+            type: String,
         }
     }
 }, { timestamps: true });

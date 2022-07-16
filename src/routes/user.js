@@ -11,10 +11,32 @@ const upload = multer({
         fileSize: 1000000,
     },
     fileFilter(req, file, cb) {
-        if (!file.originalname.match(/.(jpg|jpeg|svg|png|webp)$/)) {
+        if (!file.originalname.match(/.(jpg|jpeg|svg|png|webp|gif)$/)) {
             return cb(new Error("please upload jpg/jpeg/png/svg/webp"))
         }
         cb(undefined, true);
+    }
+})
+
+//PATCH /user/me/update - update me - |only me|
+router.patch("/user/me/update", auth, async (req, res) => {
+    try {
+        const user = req.user;
+        const updates = req.body;
+        const allowed_updates = ["username", "email", "password", "about", "socialLinks"];
+        const requested_updates = Object.keys(updates);
+        const isAllowed = requested_updates.every(up => allowed_updates.includes(up));
+
+        if (!isAllowed) {
+            return res.status(403).send({ error: "update not allowed" });
+        }
+        requested_updates.forEach(up => {
+            user[up] = updates[up];
+        })
+        await user.save();
+        res.status(200).send(user.getSecuredData());
+    } catch (err) {
+        res.status(500).send();
     }
 })
 
@@ -35,7 +57,7 @@ router.get('/users/:id', auth, async (req, res) => {
 router.get('/user/me', auth, async (req, res) => {
     try {
         const user = req.user
-        res.status(200).send(user.getSecuredDataWithProfile());
+        res.status(200).send(user.getSecuredData());
     } catch (err) {
         res.status(500).send(err);
     }
@@ -73,13 +95,14 @@ router.delete('/user/me/delete', auth, async (req, res) => {
 
 //POST /user/me/avatar - change my avatar - |only me|
 router.post("/user/me/avatar", auth, upload.single("avatar"), async (req, res) => {
+    console.log(req.body)
     try {
         const user = req.user;
         const file = req.file;
         const buffer = await sharp(file.buffer).resize({ width: 250, height: 250 }).png().toBuffer();
         user.avatar = buffer;
         await user.save();
-        res.send();
+        res.send('done!');
     } catch (err) {
         res.status(500).send(err);
     }
@@ -87,26 +110,5 @@ router.post("/user/me/avatar", auth, upload.single("avatar"), async (req, res) =
     res.send({ error: err.message }).status(400)
 })
 
-//POST /user/me/update - update me - |only me|
-router.patch("/user/me/update", auth, async (req, res) => {
-    try {
-        const user = req.user;
-        const updates = req.body;
-        const allowed_updates = ["username", "email", "password"];
-        const requested_updates = Object.keys(updates);
-        const isAllowed = requested_updates.every(up => allowed_updates.includes(up));
-
-        if (!isAllowed) {
-            return res.status(403).send({ error: "update not allowed" });
-        }
-        requested_updates.forEach(up => {
-            user[up] = updates[up];
-        })
-        await user.save();
-        res.status(200).send(user.getSecuredData());
-    } catch (err) {
-        res.status(500).send();
-    }
-})
 
 module.exports = router;
